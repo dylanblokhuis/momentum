@@ -30,8 +30,6 @@ async function runGenerator() {
   }
 }
 
-await runGenerator();
-
 async function runBundler() {
   console.log(blue("Running bundler"));
 
@@ -60,8 +58,6 @@ async function runBundler() {
     console.log(`${blue("[Bundler]")} - ${bold(line)}`);
   }
 }
-
-await runBundler();
 
 const app = new oak.Application();
 
@@ -92,13 +88,13 @@ app.use(async (context) => {
     await runGenerator();
     await runBundler();
 
-    context.response.body = "Generated new static files";
+    context.response.body = "public new static files";
     return;
   }
 
   try {
     await oak.send(context, context.request.url.pathname, {
-      root: `${Deno.cwd()}/.generated`,
+      root: `${Deno.cwd()}/public/`,
       index: "index.html",
       extensions: ["html"],
     });
@@ -108,6 +104,9 @@ app.use(async (context) => {
     context.response.body = "Not found: 404";
   }
 });
+
+await runGenerator();
+await runBundler();
 
 console.log(green("Server listening at port 3000"));
 await app.listen({ port: 3000 });

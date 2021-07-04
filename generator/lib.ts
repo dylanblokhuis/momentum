@@ -66,18 +66,18 @@ for (const page of pages) {
     filePath = splitted.join("/");
   }
 
-  console.log(filePath);
+  console.log(`${filePath}.html`);
 
   const encoder = new TextEncoder();
-  ensureFileSync(`${Deno.cwd()}/.generated/${filePath}.html`);
+  ensureFileSync(`${Deno.cwd()}/public/${filePath}.html`);
   Deno.writeFileSync(
-    `${Deno.cwd()}/.generated/${filePath}.html`,
+    `${Deno.cwd()}/public/${filePath}.html`,
     encoder.encode(html),
   );
 
-  ensureFileSync(`${Deno.cwd()}/.generated/page-data/${filePath}.json`);
+  ensureFileSync(`${Deno.cwd()}/public/page-data/${filePath}.json`);
   Deno.writeFileSync(
-    `${Deno.cwd()}/.generated/page-data/${filePath}.json`,
+    `${Deno.cwd()}/public/page-data/${filePath}.json`,
     encoder.encode(JSON.stringify(page.data)),
   );
 }
