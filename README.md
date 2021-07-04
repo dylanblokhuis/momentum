@@ -21,6 +21,9 @@ a cms that promises 90+ pagespeed scores.
 
 # usage
 
+````
+deno run --allow-net --allow-run --import-map=./import_map.json lib.ts
 ```
-deno run -A --unstable --import-map=./import_map.json src/main.ts
-```
+
+# architecture
+````
