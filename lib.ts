@@ -1,7 +1,8 @@
 import * as oak from "oak";
+import { blue, bold, cyan, green, magenta } from "std/fmt/colors.ts";
 
 async function runGenerator() {
-  console.log("Running generator");
+  console.log(magenta("Running generator"));
 
   const generator = Deno.run({
     cmd: [
@@ -13,15 +14,26 @@ async function runGenerator() {
       "--unstable",
       "generator/lib.ts",
     ],
+    stdout: "piped",
   });
 
-  await generator.status();
+  const outputBytes = await generator.output();
+
+  const decoder = new TextDecoder();
+  const output = decoder.decode(outputBytes);
+
+  const lines = output.split("\n");
+  lines.pop();
+
+  for (const line of lines) {
+    console.log(`${magenta("[Generator]")} - ${bold(line)}`);
+  }
 }
 
 await runGenerator();
 
 async function runBundler() {
-  console.log("Running bundler");
+  console.log(blue("Running bundler"));
 
   const generator = Deno.run({
     cmd: [
@@ -32,12 +44,21 @@ async function runBundler() {
       "--allow-env",
       "--allow-run",
       "--import-map=import_map.json",
-      "--unstable",
       "bundler/lib.ts",
     ],
+    stdout: "piped",
   });
+  const outputBytes = await generator.output();
 
-  await generator.status();
+  const decoder = new TextDecoder();
+  const output = decoder.decode(outputBytes);
+
+  const lines = output.split("\n");
+  lines.pop();
+
+  for (const line of lines) {
+    console.log(`${blue("[Bundler]")} - ${bold(line)}`);
+  }
 }
 
 await runBundler();
@@ -45,18 +66,24 @@ await runBundler();
 const app = new oak.Application();
 
 // Logger
-app.use(async (ctx, next) => {
+app.use(async (context, next) => {
   await next();
-  const rt = ctx.response.headers.get("X-Response-Time");
-  console.log(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
+  const rt = context.response.headers.get("X-Response-Time");
+  console.log(
+    `${green(context.request.method)} ${cyan(context.request.url.pathname)} - ${
+      bold(
+        String(rt),
+      )
+    }`,
+  );
 });
 
-// Timing
-app.use(async (ctx, next) => {
+// Response Time
+app.use(async (context, next) => {
   const start = Date.now();
   await next();
   const ms = Date.now() - start;
-  ctx.response.headers.set("X-Response-Time", `${ms}ms`);
+  context.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
 // Static
@@ -82,5 +109,5 @@ app.use(async (context) => {
   }
 });
 
-console.log("Server listening at port 3000");
+console.log(green("Server listening at port 3000"));
 await app.listen({ port: 3000 });
