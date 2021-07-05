@@ -97,8 +97,8 @@ app.use(async (context) => {
       index: "index.html",
       extensions: ["html"],
     });
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
+    // console.error(error);
     context.response.status = 404;
     context.response.body = "Not found: 404";
   }
