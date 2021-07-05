@@ -66,11 +66,6 @@ for (const page of pages) {
     `${Deno.cwd()}/public/${filePath}.html`,
     encoder.encode("<!DOCTYPE html>" + html),
   );
-
-  // Deno.writeFileSync(
-  //   `${Deno.cwd()}/public/page-data/${filePath}.json`,
-  //   encoder.encode(JSON.stringify(page.data)),
-  // );
 }
 
 ensureFileSync(`${Deno.cwd()}/public/_/routes.json`);

@@ -85,10 +85,9 @@ app.use(async (context, next) => {
 // Static
 app.use(async (context) => {
   if (context.request.url.pathname === "/_/regenerate") {
-    await runGenerator();
-    await runBundler();
+    await Promise.all([runGenerator(), runBundler()]);
 
-    context.response.body = "public new static files";
+    context.response.body = "regenerated!";
     return;
   }
 
@@ -105,8 +104,7 @@ app.use(async (context) => {
   }
 });
 
-await runGenerator();
-await runBundler();
+await Promise.all([runGenerator(), runBundler()]);
 
 console.log(green("Server listening at port 3000"));
 await app.listen({ port: 3000 });
