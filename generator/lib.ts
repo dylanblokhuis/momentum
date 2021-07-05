@@ -13,11 +13,11 @@ const pages = [
   },
   {
     title: "hello",
-    path: "/hello",
+    path: "/hello/",
   },
   {
     title: "Yo",
-    path: "/hello/yo",
+    path: "/hello/yo/",
   },
 ];
 
@@ -52,6 +52,11 @@ for (const page of pages) {
   const splitted = page.path.split("/");
   splitted.shift();
 
+  // remove trailing slash from filePath
+  if (page.path.length !== 1 && page.path.slice(page.path.length - 1) === "/") {
+    splitted.pop();
+  }
+
   let filePath;
   if (splitted[0] === "") {
     filePath = "index";
@@ -59,11 +64,17 @@ for (const page of pages) {
     filePath = splitted.join("/");
   }
 
-  console.log(`${filePath}.html`);
+  let fullPath = `/${filePath}/index.html`;
 
-  ensureFileSync(`${Deno.cwd()}/public/${filePath}.html`);
+  if (filePath === "index") {
+    fullPath = `/index.html`;
+  }
+
+  console.log(fullPath);
+
+  ensureFileSync(`${Deno.cwd()}/public${fullPath}`);
   Deno.writeFileSync(
-    `${Deno.cwd()}/public/${filePath}.html`,
+    `${Deno.cwd()}/public${fullPath}`,
     encoder.encode("<!DOCTYPE html>" + html),
   );
 }

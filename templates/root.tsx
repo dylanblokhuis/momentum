@@ -1,7 +1,7 @@
 import React from "react";
-import { Link, Router } from "@reach/router";
+import { Router } from "@reach/router";
 
-import Route from "./route.tsx";
+import Page from "./page.tsx";
 
 interface RootProps {
   routes: Route[];
@@ -16,7 +16,7 @@ export default function Root(props: RootProps) {
   return (
     <Router>
       {props.routes.map((route) => (
-        <Route path={route.path} content={route.title} />
+        <Page path={route.path} content={route.title} />
       ))}
     </Router>
   );
