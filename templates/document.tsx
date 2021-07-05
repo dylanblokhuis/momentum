@@ -1,23 +1,47 @@
 import React from "react";
 
-interface DocumentProps {
+export interface DocumentProps {
   title: string;
   content: string;
+  path: string;
+  scripts: DocumentScript[];
 }
 
-export default function Document({ title, content }: DocumentProps) {
+export interface DocumentScript {
+  src?: string;
+  type?: "module" | undefined;
+  children?: string;
+}
+
+export default function Document(
+  { title, content, scripts }: DocumentProps,
+) {
   return (
     <html>
       <head>
         <meta charSet="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content="momentum" />
         <title>{title}</title>
+        <link
+          as="fetch"
+          rel="preload"
+          href="/_/routes.json"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <div id="momentum" dangerouslySetInnerHTML={{ __html: content }} />
 
-        <script src="/static/render.js" type="module" />
+        {scripts.map((script) => (
+          <script
+            src={script.src}
+            type={script.type}
+            dangerouslySetInnerHTML={{ __html: script.children || "" }}
+            async
+          />
+        ))}
       </body>
     </html>
   );

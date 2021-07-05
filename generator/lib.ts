@@ -1,45 +1,51 @@
 import { createElement } from "react";
 import { renderToStaticMarkup, renderToString } from "react-dom/server";
 import { ensureFileSync } from "std/fs/mod.ts";
+import { ServerLocation } from "@reach/router";
+
 import Root from "../templates/root.tsx";
-import Document from "../templates/document.tsx";
+import Document, { DocumentScript } from "../templates/document.tsx";
 
 const pages = [
   {
     title: "Home",
     path: "/",
-    data: {
-      image: "https://via.placeholder.com/350x150.jpg",
-    },
   },
   {
     title: "hello",
     path: "/hello",
-    data: {
-      content: "Hello",
-    },
   },
   {
     title: "Yo",
     path: "/hello/yo",
-    data: {
-      content: "Yo",
-    },
   },
 ];
 
+const encoder = new TextEncoder();
+
 for (const page of pages) {
   const hydratableHtml = renderToString(
-    createElement(Root, {
-      data: page.data,
-      path: page.path,
+    createElement(ServerLocation, {
+      url: page.path,
+      children: createElement(Root, {
+        routes: pages,
+      }),
     }),
   );
+
+  const scripts: DocumentScript[] = [
+    {
+      src: "/static/render.js",
+      type: "module",
+    },
+  ];
 
   const html = renderToStaticMarkup(
     createElement(Document, {
       title: page.title,
       content: hydratableHtml,
+      path: page.path,
+      scripts: scripts,
     }),
   );
 
@@ -55,18 +61,22 @@ for (const page of pages) {
 
   console.log(`${filePath}.html`);
 
-  const encoder = new TextEncoder();
   ensureFileSync(`${Deno.cwd()}/public/${filePath}.html`);
   Deno.writeFileSync(
     `${Deno.cwd()}/public/${filePath}.html`,
     encoder.encode("<!DOCTYPE html>" + html),
   );
 
-  ensureFileSync(`${Deno.cwd()}/public/page-data/${filePath}.json`);
-  Deno.writeFileSync(
-    `${Deno.cwd()}/public/page-data/${filePath}.json`,
-    encoder.encode(JSON.stringify(page.data)),
-  );
+  // Deno.writeFileSync(
+  //   `${Deno.cwd()}/public/page-data/${filePath}.json`,
+  //   encoder.encode(JSON.stringify(page.data)),
+  // );
 }
+
+ensureFileSync(`${Deno.cwd()}/public/_/routes.json`);
+Deno.writeFileSync(
+  `${Deno.cwd()}/public/_/routes.json`,
+  encoder.encode(JSON.stringify(pages)),
+);
 
 self.close();

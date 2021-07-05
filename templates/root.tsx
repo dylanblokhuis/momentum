@@ -1,9 +1,23 @@
 import React from "react";
+import { Link, Router } from "@reach/router";
 
-export default function Root(props: any) {
+import Route from "./route.tsx";
+
+interface RootProps {
+  routes: Route[];
+}
+
+export interface Route {
+  title: string;
+  path: string;
+}
+
+export default function Root(props: RootProps) {
   return (
-    <div>
-      <div>Hello!, path: {props.path}</div>
-    </div>
+    <Router>
+      {props.routes.map((route) => (
+        <Route path={route.path} content={route.title} />
+      ))}
+    </Router>
   );
 }
