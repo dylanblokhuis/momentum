@@ -1,5 +1,8 @@
-import { createElement } from "react";
-import { renderToStaticMarkup, renderToString } from "react-dom/server";
+import * as React from "react";
+import {
+  renderToStaticMarkup,
+  renderToString,
+} from "react-dom/server?dev&no-check";
 import { ensureFileSync } from "std/fs/mod.ts";
 import { ServerLocation } from "@reach/router";
 
@@ -25,9 +28,9 @@ const encoder = new TextEncoder();
 
 for (const page of pages) {
   const hydratableHtml = renderToString(
-    createElement(ServerLocation, {
+    React.createElement(ServerLocation, {
       url: page.path,
-      children: createElement(Root, {
+      children: React.createElement(Root, {
         routes: pages,
       }),
     }),
@@ -41,7 +44,7 @@ for (const page of pages) {
   ];
 
   const html = renderToStaticMarkup(
-    createElement(Document, {
+    React.createElement(Document, {
       title: page.title,
       content: hydratableHtml,
       path: page.path,

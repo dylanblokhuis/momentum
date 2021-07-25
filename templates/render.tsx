@@ -4,12 +4,16 @@ import Root from "../templates/root.tsx";
 
 const root = document.getElementById("momentum");
 
-const res = await fetch("/_/routes.json");
-const routes = await res.json();
+async function load() {
+  const res = await fetch("/_/routes.json");
+  const routes = await res.json();
 
-if (root) {
-  ReactDOM.hydrate(
-    <Root routes={routes} />,
-    root,
-  );
+  if (root) {
+    (ReactDOM as any).hydrateRoot(
+      root,
+      <Root routes={routes} />,
+    );
+  }
 }
+
+load();

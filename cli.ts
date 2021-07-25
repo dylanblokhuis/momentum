@@ -1,5 +1,8 @@
 import * as oak from "oak";
 import { blue, bold, cyan, green, magenta } from "std/fmt/colors.ts";
+import { join } from "std/path/mod.ts";
+
+const installedLocation = join(import.meta.url.replace("file:///", ""), "..");
 
 async function runGenerator() {
   console.log(magenta("Running generator"));
@@ -10,9 +13,9 @@ async function runGenerator() {
       "run",
       "--allow-write",
       "--allow-read",
-      "--import-map=import_map.json",
+      `--import-map=${join(installedLocation, "./import_map.json")}`,
       "--unstable",
-      "generator/lib.ts",
+      `${join(installedLocation, "./generator/lib.ts")}`,
     ],
     stdout: "piped",
   });
@@ -40,9 +43,11 @@ async function runBundler() {
       "--allow-write",
       "--allow-read",
       "--allow-env",
+      "--allow-net",
       "--allow-run",
-      "--import-map=import_map.json",
-      "bundler/lib.ts",
+      "--unstable",
+      `--import-map=${join(installedLocation, "./import_map.json")}`,
+      `${join(installedLocation, "./bundler/lib.ts")}`,
     ],
     stdout: "piped",
   });

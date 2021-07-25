@@ -16,3 +16,8 @@ cms + ssg that promises 90+ pagespeed scores.
 ```bash
 deno run --allow-net --allow-run --allow-read --import-map=./import_map.json lib.ts
 ```
+
+# code splitting
+
+cms generates list of pages with a certain template as entrypoint, which ends up
+with codesplitting
