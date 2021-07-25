@@ -8,6 +8,9 @@ import * as importMapPlugin from "./plugins/import-map.ts";
  * Users have the option use overwrite, so this functions checks that.
  */
 function getPathWithFallback(relativePath: string): string {
+  console.log(import.meta.url);
+  console.log(relativePath);
+
   if (existsSync(join(Deno.cwd(), relativePath))) {
     return join(Deno.cwd(), relativePath);
   }
